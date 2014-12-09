@@ -13,12 +13,9 @@
 
 - (ApplicationData *)newApplicationRecord:(NSIndexPath *) IndexPath
 {
-    
     NSIndexPath * nextIndexPath = [NSIndexPath  indexPathForRow:IndexPath.row+1 inSection:0];
     DetailViewController *detailVC;
     ApplicationData *appObject = self.applicationRecordsForDetailView[nextIndexPath.row];
-   // self.appRecord = appObject;
-    
     detailVC.currentIndexPath = nextIndexPath;
     return appObject;
 }
@@ -31,7 +28,7 @@
 - (NSIndexPath *)previousIndexPath:(NSIndexPath *)currentIndexPath
 {
     return [NSIndexPath  indexPathForRow:currentIndexPath.row-1 inSection:0];
-
+    
 }
 
 - (BOOL)isNextIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit
@@ -41,7 +38,7 @@
         return true;
     }
     return false;
-
+    
 }
 
 - (BOOL)isPreviousIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit
@@ -51,7 +48,7 @@
         return true;
     }
     return false;
-
+    
 }
 
 @end

@@ -25,7 +25,6 @@
 		7E56C21F19F12D7500C1A704 /* frame_020.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E56C21419F12D7500C1A704 /* frame_020.png */; };
 		7E75028D19D93FAD0093B089 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E75028C19D93FAD0093B089 /* DetailViewController.m */; };
 		7E84FE0C1A2D9C7F005DCF36 /* DetailViewSwipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E84FE0B1A2D9C7F005DCF36 /* DetailViewSwipe.m */; };
-		7E84FE0E1A2EE7AB005DCF36 /* loading-icon copy.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E84FE0D1A2EE7AA005DCF36 /* loading-icon copy.png */; };
 		7E84FE101A302F54005DCF36 /* whiteBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E84FE0F1A302F54005DCF36 /* whiteBackground.png */; };
 		7EB5535219E538D400D0B24F /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB5535119E538D400D0B24F /* Reachability.m */; };
 		7EFF6D8319D41B8A007EE540 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EFF6D8219D41B8A007EE540 /* Foundation.framework */; };
@@ -79,7 +78,6 @@
 		7E75028C19D93FAD0093B089 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		7E84FE0A1A2D9C7F005DCF36 /* DetailViewSwipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewSwipe.h; sourceTree = "<group>"; };
 		7E84FE0B1A2D9C7F005DCF36 /* DetailViewSwipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewSwipe.m; sourceTree = "<group>"; };
-		7E84FE0D1A2EE7AA005DCF36 /* loading-icon copy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loading-icon copy.png"; sourceTree = "<group>"; };
 		7E84FE0F1A302F54005DCF36 /* whiteBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteBackground.png; sourceTree = "<group>"; };
 		7EB5535019E538D400D0B24F /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		7EB5535119E538D400D0B24F /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -173,7 +171,6 @@
 				7E4F48B21A1618A300628ECF /* ImageDownloader.m */,
 				7E1260A01A079B9B0058F9D3 /* ApplicationCell.h */,
 				7E1260A11A079BD80058F9D3 /* ApplicationCell.m */,
-				7E84FE0D1A2EE7AA005DCF36 /* loading-icon copy.png */,
 				7EFF6D9719D41B8A007EE540 /* MasterViewController.h */,
 				7EFF6D9819D41B8A007EE540 /* MasterViewController.m */,
 				7E84FE0F1A302F54005DCF36 /* whiteBackground.png */,
@@ -316,7 +313,6 @@
 				7E56C21B19F12D7500C1A704 /* frame_016.png in Resources */,
 				7E56C21A19F12D7500C1A704 /* frame_015.png in Resources */,
 				7EFF6D8D19D41B8A007EE540 /* InfoPlist.strings in Resources */,
-				7E84FE0E1A2EE7AB005DCF36 /* loading-icon copy.png in Resources */,
 				7E56C21719F12D7500C1A704 /* frame_012.png in Resources */,
 				7E56C21E19F12D7500C1A704 /* frame_019.png in Resources */,
 				7EFF6D9619D41B8A007EE540 /* Main.storyboard in Resources */,

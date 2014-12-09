@@ -26,7 +26,7 @@
 
 @implementation ImageDownloader : NSObject
 
-AppDelegate *appDelgate;
+AppDelegate *appDelegate;
 
 - (void)startDownloading:(NSString *)imageURL saveAs:(NSString *)name isIcon:(BOOL)icon
 {
@@ -41,7 +41,7 @@ AppDelegate *appDelgate;
     _session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     
     self.downloadTask = [_session downloadTaskWithURL:[NSURL URLWithString:imageURL]];
-
+    
     [_downloadTask resume];
 }
 
@@ -55,14 +55,14 @@ AppDelegate *appDelgate;
 {
     NSString *directory;
     NSString *fileNameWithoutWhiteSpace = [_fileName stringByReplacingOccurrencesOfString:@" " withString:@""];
-
+    
     if(self.isIcon)
     {
-        directory = [appDelgate.documentDirectoryPath stringByAppendingPathComponent:@"appIcons"];
+        directory = [appDelegate.documentDirectoryPath stringByAppendingPathComponent:@"appIcons"];
     }
     else
     {
-        directory = [appDelgate.documentDirectoryPath stringByAppendingPathComponent:@"appImages"];
+        directory = [appDelegate.documentDirectoryPath stringByAppendingPathComponent:@"appImages"];
     }
     
     NSString *temp = [NSString stringWithFormat:@"%@%@",fileNameWithoutWhiteSpace, @".png"];
@@ -81,13 +81,12 @@ AppDelegate *appDelgate;
     {
         if(self.isIcon)
         {
-            [appDelgate.iconDictionary setValue:destinationURL forKey:self.imageURL];
+            [appDelegate.iconDictionary setValue:destinationURL forKey:self.imageURL];
         }
         else
         {
-            [appDelgate.imageDictionary setValue:destinationURL forKey:self.imageURL];
+            [appDelegate.imageDictionary setValue:destinationURL forKey:self.imageURL];
         }
-        
         if(self.completionHandler)
         {
             self.completionHandler([NSURL URLWithString:destinationURL]);

@@ -20,7 +20,6 @@
 @class ImageDownloader;
 @interface ApplicationCell()
 
-
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *imageLoading;
 @property (copy) void (^sessionCompletionHandler)();
 @property (nonatomic, strong) ImageDownloader *imageDownloader;
@@ -34,7 +33,7 @@
 
 @implementation ApplicationCell
 
-AppDelegate *appDelgate;
+AppDelegate *appDelegate;
 UIActivityIndicatorView *activityIndicator;
 - (UITableView *)findParentTableView
 {
@@ -53,45 +52,51 @@ UIActivityIndicatorView *activityIndicator;
 
 - (void)refreshViews
 {
-    appDelgate = [[UIApplication sharedApplication] delegate];
-
+    appDelegate = [[UIApplication sharedApplication] delegate];
+    NSString *iconLocalPath = [appDelegate.documentDirectoryPath stringByAppendingPathComponent:@"appIcons"];
+    
+    if(![[NSFileManager defaultManager] fileExistsAtPath:iconLocalPath])
+    {
+        [self createDirectoryToStoreAppIcons];
+    }
+    
     __weak ApplicationCell *weak = self;
     weak.appLabelName.text = _appData.name;
     self.detailLabel.text = _appData.artistName;
     _detailLabel.textColor = [UIColor lightGrayColor];
     self.appIcon.image = [UIImage imageNamed:@"whiteBackground"];
-
-
-    NSString *appIconStoredPath = [appDelgate.iconDictionary valueForKey:_appData.iconURL];
-    UIImage *image = [UIImage imageWithContentsOfFile:appIconStoredPath];
-    if(!image && appDelgate.hasInternetConnection )
+    
+    NSString *appIconStoredPath = [appDelegate.iconDictionary valueForKey:_appData.iconURL];
+    UIImage *image1 = [UIImage imageWithContentsOfFile:appIconStoredPath];
+    if(!image1 && appDelegate.hasInternetConnection )
     {
-           // if(_isDecelerating == NO && _isDragging == NO)
+        if(_isDecelerating == NO && _isDragging == NO)
+        {
+            if(_imageDownloader == nil)
             {
-                if(_imageDownloader == nil)
-                {
-                    _imageDownloader = [[ImageDownloader alloc] init];
-                    _imageDownloader.appData = self.appData;
-                    
-                    _imageDownloader.completionHandler = ^(NSURL *localPath){
-                        dispatch_async(dispatch_get_main_queue(), ^{
+                _imageDownloader = [[ImageDownloader alloc] init];
+                _imageDownloader.appData = self.appData;
+                
+                _imageDownloader.completionHandler = ^(NSURL *localPath){
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         weak.appIcon.image = [UIImage imageWithContentsOfFile:localPath.path];
                         [activityIndicator stopAnimating];
                         [weak.parentTableView reloadData];
-                        });
-                    };
-                }
-                [_imageDownloader startDownloading:_appData.iconURL saveAs:_appData.name isIcon:YES];
+                    });
+                };
             }
+            [_imageDownloader startDownloading:_appData.iconURL saveAs:_appData.name isIcon:YES];
+        }
     }
-    else if(image)
+    else if(image1)
     {
-        self.appIcon.image = image;
+        self.appIcon.image = image1;
         [activityIndicator stopAnimating];
-
     }
-    else if(!appDelgate.hasInternetConnection)
+    else if(!appDelegate.hasInternetConnection)
     {
+        self.appIcon.image = [UIImage imageNamed:@"no_internet_connection"];
+        [activityIndicator stopAnimating];
     }
 }
 
@@ -105,16 +110,14 @@ UIActivityIndicatorView *activityIndicator;
 
 - (void)setApplicationData:(ApplicationData *)applicationData forIndexPath:(NSIndexPath *)indexPath
 {
-     activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    activityIndicator.center = CGPointMake(25,25); //_appIcon.center;
+    activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    activityIndicator.center = CGPointMake(25,25);
     [_appIcon addSubview:activityIndicator];
     [_appIcon bringSubviewToFront:activityIndicator];
     [activityIndicator startAnimating];
     activityIndicator.hidesWhenStopped = YES;
     
-    [self createDirectoryToStoreAppIcons];
-    
-    _indexPath = indexPath;
+   _indexPath = indexPath;
     self.appData = applicationData;
     [self refreshViews];
 }
@@ -138,7 +141,7 @@ UIActivityIndicatorView *activityIndicator;
     
     if(![[NSFileManager defaultManager] createDirectoryAtURL:appIconURLPath withIntermediateDirectories:NO attributes:nil error:&error])
     {
-//        NSLog(@"AppIconDirectory Creating error : %@", error);
+        //        NSLog(@"AppIconDirectory Creating error : %@", error);
     }
 }
 

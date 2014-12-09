@@ -86,7 +86,6 @@ NSURLSessionDownloadTask *downloadTask;
         self.appRecord = appObject;
         self.currentIndexPath = previousIndexPath;
         [self loadUI];
-        
     }
 }
 
@@ -116,8 +115,7 @@ NSURLSessionDownloadTask *downloadTask;
     
     NSString *appIconStoredPath = [appDelegate.imageDictionary valueForKey:_appRecord.detailViewImageURL];
     _appImage.image = [UIImage imageWithContentsOfFile:appIconStoredPath];
-   // [indicator stopAnimating];
-
+    
     if(_appImage.image)
     {
         [indicator stopAnimating];

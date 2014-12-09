@@ -14,6 +14,8 @@
 #import "iTuneDataManager.h"
 #import "ImageDownloader.h"
 #import "DetailViewSwipe.h"
+#import "AppDelegate.h"
+
 #define queue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
 #define JSONURL [NSURL URLWithString:@"https://itunes.apple.com/us/rss/newfreeapplications/limit=2/json"]
 
@@ -22,8 +24,6 @@
 @interface MasterViewController ()
 
 @property(weak, nonatomic) IBOutlet UITableView *tableView;
-//@property(nonatomic, strong) ApplicationCell *cell;
-//@property (weak, nonatomic) IBOutlet ApplicationCell *cell;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (nonatomic) NSMutableArray *filteredApplicationRecords;
 
@@ -31,12 +31,13 @@
 
 @implementation MasterViewController
 
-//@synthesize applicationSearchBar;
+AppDelegate *appDelegate;
 static NSString *cellIdentifier = @"ApplicationCell";
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    appDelegate = [[UIApplication sharedApplication] delegate];
     
     self.applicationRecords = [[NSMutableArray alloc] init];
     
@@ -47,8 +48,11 @@ static NSString *cellIdentifier = @"ApplicationCell";
     [_loadingView setHidden:YES];
     [self.tableView reloadData];
     
+    _applicationRecords = [[iTuneDataManager alloc] loadAllApplicationData];
+    
     // Parse json
-    [self parseJSONData];
+    if(appDelegate.hasInternetConnection)
+        [self fetchJSONData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -73,13 +77,12 @@ static NSString *cellIdentifier = @"ApplicationCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ApplicationCell *cell = nil;//= [[ApplicationCell alloc] init];
-    
+    ApplicationCell *cell = nil;
     NSUInteger nodeCount = [self.applicationRecords count];
     
     if(indexPath.row == 0  && nodeCount == 0  )
     {
-        cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         cell.appLabelName.text = @"Loading...";
         cell.detailLabel.text = @"";
     }
@@ -92,7 +95,6 @@ static NSString *cellIdentifier = @"ApplicationCell";
         if([self.filteredApplicationRecords count] && tableView == self.searchDisplayController.searchResultsTableView)
         {
             appObject = self.filteredApplicationRecords[indexPath.row];
-            
         }
         else
         {
@@ -145,25 +147,14 @@ static NSString *cellIdentifier = @"ApplicationCell";
 
 #pragma mark - UISearchDisplayController Delegate Methods
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
-    // Tells the table data source to reload when text changes
     [self filterContentForSearchText:searchString scope:
      [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
-    // Return YES to cause the search result table view to be reloaded.
     return YES;
 }
-//
-//-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
-//    // Tells the table data source to reload when scope bar selection changes
-//    [self filterContentForSearchText:self.searchDisplayController.searchBar.text scope:
-//     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
-//    // Return YES to cause the search result table view to be reloaded.
-//    return YES;
-//}
 
 #pragma mark - ParseDelegate
-- (void)parseJSONData
+- (void)fetchJSONData
 {
-    _applicationRecords = [[iTuneDataManager alloc] loadAllApplicationData];
     if (_applicationRecords) {
         NSLog(@"Application record");
     }
@@ -179,12 +170,10 @@ static NSString *cellIdentifier = @"ApplicationCell";
 
 - (void)filterContentForSearchText:(NSString *)searchText scope:(NSString *)scope
 {
-    NSLog(@"TEXT %@",searchText);
     [self.filteredApplicationRecords removeAllObjects];
-    NSString* predicateString = [NSString stringWithFormat:@"SELF.name contains[c]%@", searchText];
+    NSString* predicateString = [NSString stringWithFormat:@"SELF.name CONTAINS[c] %@", searchText];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateString];
     self.filteredApplicationRecords = [NSMutableArray arrayWithArray:[_applicationRecords filteredArrayUsingPredicate:predicate]];
-    
 }
 
 - (void)dealloc
