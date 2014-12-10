@@ -61,7 +61,7 @@ UIActivityIndicatorView *activityIndicator;
     }
     
     __weak ApplicationCell *weak = self;
-    weak.appLabelName.text = _appData.name;
+    self.appLabelName.text = _appData.name;
     self.detailLabel.text = _appData.artistName;
     _detailLabel.textColor = [UIColor lightGrayColor];
     self.appIcon.image = [UIImage imageNamed:@"whiteBackground"];

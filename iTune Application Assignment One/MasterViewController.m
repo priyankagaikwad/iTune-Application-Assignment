@@ -40,7 +40,6 @@ static NSString *cellIdentifier = @"ApplicationCell";
     appDelegate = [[UIApplication sharedApplication] delegate];
     
     self.applicationRecords = [[NSMutableArray alloc] init];
-    
     [self.view addSubview:_loadingView];
     
     [_dataLoadingIndicator startAnimating];
@@ -53,6 +52,11 @@ static NSString *cellIdentifier = @"ApplicationCell";
     // Parse json
     if(appDelegate.hasInternetConnection)
         [self fetchJSONData];
+    if([_applicationRecords count] > 0)
+    {
+        self.filteredApplicationRecords = [NSMutableArray arrayWithCapacity:[_applicationRecords count]];
+    }
+    self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
 }
 
 - (void)didReceiveMemoryWarning
@@ -79,27 +83,25 @@ static NSString *cellIdentifier = @"ApplicationCell";
 {
     ApplicationCell *cell = nil;
     NSUInteger nodeCount = [self.applicationRecords count];
+    ApplicationData *appObject;
+    cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    cell.isDecelerating = self.tableView.isDecelerating;
+    cell.isDragging = self.tableView.isDragging;
     
     if(indexPath.row == 0  && nodeCount == 0  )
     {
-        cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         cell.appLabelName.text = @"Loading...";
         cell.detailLabel.text = @"";
     }
+    
+    else if(tableView == self.tableView)
+    {
+        appObject = self.applicationRecords[indexPath.row];
+        [cell setApplicationData:appObject forIndexPath:indexPath];
+    }
     else
     {
-        cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-        cell.isDecelerating = self.tableView.isDecelerating;
-        cell.isDragging = self.tableView.isDragging;
-        ApplicationData *appObject;
-        if([self.filteredApplicationRecords count] && tableView == self.searchDisplayController.searchResultsTableView)
-        {
-            appObject = self.filteredApplicationRecords[indexPath.row];
-        }
-        else
-        {
-            appObject = self.applicationRecords[indexPath.row];
-        }
+        appObject = self.filteredApplicationRecords[indexPath.row];
         [cell setApplicationData:appObject forIndexPath:indexPath];
     }
     return cell ;
@@ -110,11 +112,22 @@ static NSString *cellIdentifier = @"ApplicationCell";
     DetailViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"appDetailsViewController"];
     
     detailViewController.currentIndexPath = indexPath;
-    detailViewController.applicationRecordsForDetailView = self.applicationRecords;
     
-    ApplicationData *appObject = self.applicationRecords[indexPath.row];
+    ApplicationData *appObject;
     
-    detailViewController.appRecord = appObject;
+    if([self.filteredApplicationRecords count] && tableView == self.searchDisplayController.searchResultsTableView)
+    {
+        detailViewController.applicationRecordsForDetailView = self.filteredApplicationRecords;
+        appObject = self.filteredApplicationRecords[indexPath.row];
+        detailViewController.appRecord = appObject;
+
+    }
+    else
+    {
+        detailViewController.applicationRecordsForDetailView = self.applicationRecords;
+        appObject = self.applicationRecords[indexPath.row];
+        detailViewController.appRecord = appObject;
+    }
     
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
@@ -145,36 +158,32 @@ static NSString *cellIdentifier = @"ApplicationCell";
     [[NSNotificationCenter defaultCenter] postNotificationName:@"stopDownloading" object:imageDownloader];
 }
 
-#pragma mark - UISearchDisplayController Delegate Methods
--(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
-    [self filterContentForSearchText:searchString scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
+- (void)filterContentForSearchText:(NSString *)searchText scope:(NSString *)scope
+{
+    [self.filteredApplicationRecords removeAllObjects];
+    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF.name BEGINSWITH[c] %@", searchText];
+    
+    self.filteredApplicationRecords = [NSMutableArray arrayWithArray:[self.applicationRecords filteredArrayUsingPredicate:resultPredicate]];
+}
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+{
+    [self filterContentForSearchText:searchString scope:[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
     return YES;
 }
 
 #pragma mark - ParseDelegate
 - (void)fetchJSONData
 {
-    if (_applicationRecords) {
-        NSLog(@"Application record");
-    }
     dispatch_async(queue ,^{
         NSData *iTuneApplicationData = [NSData dataWithContentsOfURL:JSONURL];
         _applicationRecords = [[iTuneDataManager alloc] populateApplicationInformationFromData:iTuneApplicationData];
-        _filteredApplicationRecords = [NSMutableArray arrayWithCapacity:[_applicationRecords count]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
     });
 }
 
-- (void)filterContentForSearchText:(NSString *)searchText scope:(NSString *)scope
-{
-    [self.filteredApplicationRecords removeAllObjects];
-    NSString* predicateString = [NSString stringWithFormat:@"SELF.name CONTAINS[c] %@", searchText];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateString];
-    self.filteredApplicationRecords = [NSMutableArray arrayWithArray:[_applicationRecords filteredArrayUsingPredicate:predicate]];
-}
 
 - (void)dealloc
 {
