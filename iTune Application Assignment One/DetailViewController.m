@@ -28,7 +28,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *appRights;
 @property (weak, nonatomic) IBOutlet UIButton *appURLLink;
 @property (strong, nonatomic) ImageDownloader *imageDownloader;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *imageLoading;
 
 @end
 
@@ -44,11 +43,11 @@ NSURLSessionDownloadTask *downloadTask;
     [super viewDidLoad];
     appDelegate = [[UIApplication sharedApplication] delegate];
     [self createDirectoryToStoredAppImages];
-    UISwipeGestureRecognizer *swipeLeft1 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeft:)];
-    UISwipeGestureRecognizer *swipeRight1 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
+    UISwipeGestureRecognizer *swipeLeftRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeft:)];
+    UISwipeGestureRecognizer *swipeRightRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
     
-    [swipeLeft1 setDirection:UISwipeGestureRecognizerDirectionLeft];
-    [swipeRight1 setDirection:UISwipeGestureRecognizerDirectionRight];
+    [swipeLeftRecognizer setDirection:UISwipeGestureRecognizerDirectionLeft];
+    [swipeRightRecognizer setDirection:UISwipeGestureRecognizerDirectionRight];
     [self loadUI];
 }
 
@@ -73,7 +72,6 @@ NSURLSessionDownloadTask *downloadTask;
         self.appRecord = appObject;
         self.currentIndexPath = nextIndexPath;
         [self loadUI];
-        
     }
 }
 
