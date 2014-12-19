@@ -17,5 +17,5 @@
 @property (nonatomic, retain) UILabel *loadingLabel;
 @property (nonatomic, strong) NSMutableDictionary *dictForStroingAppImageURLsAndPaths;
 @property (nonatomic) NSMutableArray *applicationRecords;
-
+@property (nonatomic) BOOL isLandscape;
 @end

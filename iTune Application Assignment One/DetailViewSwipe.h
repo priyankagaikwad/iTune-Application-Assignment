@@ -9,13 +9,23 @@
 #import <Foundation/Foundation.h>
 #import "ApplicationData.h"
 
-@interface DetailViewSwipe : UIViewController
-
-@property (nonatomic,strong) NSMutableArray *applicationRecordsForDetailView;
+@protocol detailViewSwipeProtocol <NSObject>
 
 - (ApplicationData *)newApplicationRecord:(NSIndexPath *) IndexPath;
-- (NSIndexPath *)previousIndexPath:(NSIndexPath *)currentIndexPath;
-- (NSIndexPath *)nextIndexPath:(NSIndexPath *)currentIndexPath;
-- (BOOL)isNextIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit;
 - (BOOL)isPreviousIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit;
+- (BOOL)isNextIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit;
+- (NSIndexPath *)nextIndexPath:(NSIndexPath *)currentIndexPath;
+- (NSIndexPath *)previousIndexPath:(NSIndexPath *)currentIndexPath;
+
+@end
+
+@interface DetailViewSwipe : NSObject <detailViewSwipeProtocol>
+
+@property (nonatomic,strong) NSMutableArray *applicationRecords;
+
+//- (ApplicationData *)newApplicationRecord:(NSIndexPath *) IndexPath;
+//- (NSIndexPath *)previousIndexPath:(NSIndexPath *)currentIndexPath;
+//- (NSIndexPath *)nextIndexPath:(NSIndexPath *)currentIndexPath;
+//- (BOOL)isNextIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit;
+//- (BOOL)isPreviousIndexPath:(NSIndexPath *)currentIndexPath maxLimit:(NSUInteger )limit;
 @end

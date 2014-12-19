@@ -1,17 +1,15 @@
 //
-//  DetailViewSwipe.m
+//  swipeDelegate.h
 //  iTune Application Assignment One
 //
-//  Created by synerzip on 02/12/14.
+//  Created by synerzip on 11/12/14.
 //  Copyright (c) 2014 Synerzip. All rights reserved.
 //
 
-#import "DetailViewSwipe.h"
-#import "ApplicationData.h"
-#import "DetailViewController.h"
+#ifndef iTune_Application_Assignment_One_swipeDelegate_h
+#define iTune_Application_Assignment_One_swipeDelegate_h
 
-
-@implementation DetailViewSwipe
+@protocol detailViewSwipeProtocol <NSObject>
 
 - (ApplicationData *)newApplicationRecord:(NSIndexPath *) IndexPath
 {
@@ -52,3 +50,5 @@
 }
 
 @end
+
+#endif

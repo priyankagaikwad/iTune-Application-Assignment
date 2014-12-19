@@ -111,7 +111,7 @@ UIActivityIndicatorView *activityIndicator;
 - (void)setApplicationData:(ApplicationData *)applicationData forIndexPath:(NSIndexPath *)indexPath
 {
     activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    activityIndicator.center = CGPointMake(25,25);
+    activityIndicator.center = _appIcon.center;// CGPointMake(25,25);
     [_appIcon addSubview:activityIndicator];
     [_appIcon bringSubviewToFront:activityIndicator];
     [activityIndicator startAnimating];

@@ -1,23 +1,19 @@
 //
-//  appDetailViewController.m
+//  LandscapeDetailviewController.m
 //  iTune Application Assignment One
 //
-//  Created by Yogesh Bharate on 29/09/14.
+//  Created by synerzip on 17/12/14.
 //  Copyright (c) 2014 Synerzip. All rights reserved.
 //
 
-#import "DetailViewController.h"
+#import "LandscapeDetailviewController.h"
 #import "MasterViewController.h"
 #import "AppDelegate.h"
 #import "ApplicationData.h"
 #import "ImageDownloader.h"
 #import "DetailViewSwipe.h"
 
-#define queue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-
-@class ImageDownloader;
-
-@interface DetailViewController () <detailViewSwipeProtocol>
+@interface LandscapeDetailviewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *appImage;
 @property (weak, nonatomic) IBOutlet UILabel *appName;
@@ -29,10 +25,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *appURLLink;
 @property (strong, nonatomic) ImageDownloader *imageDownloader;
 
-//@property (nonatomic) id <detailViewSwipeProtocol> delegate;
 @end
 
-@implementation DetailViewController
+@implementation LandscapeDetailviewController
 
 AppDelegate *appDelegate;
 UIImageView *animatedImageView;
@@ -40,11 +35,10 @@ UIActivityIndicatorView  *indicator;
 NSURLSessionDownloadTask *downloadTask;
 DetailViewSwipe *SwipeDataSource;
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     appDelegate = [[UIApplication sharedApplication] delegate];
-
+    
     [self createDirectoryToStoredAppImages];
     UISwipeGestureRecognizer *swipeLeftRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeft:)];
     UISwipeGestureRecognizer *swipeRightRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
@@ -96,7 +90,7 @@ DetailViewSwipe *SwipeDataSource;
 - (void) loadUI
 {
     self.appImage.image = [UIImage imageNamed:@"whiteBackgroundDetailView"];
-
+    
     indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     indicator.center = CGPointMake(120, 100);
     [_appImage addSubview:indicator];
@@ -108,7 +102,7 @@ DetailViewSwipe *SwipeDataSource;
 
 - (void)refreshViews
 {
-    __weak DetailViewController *weak = self;
+    __weak LandscapeDetailviewController *weak = self;
     self.appName.text = _appRecord.name;
     self.appArtistName.text = _appRecord.artistName;
     self.appCategory.text = _appRecord.category;
@@ -174,5 +168,7 @@ DetailViewSwipe *SwipeDataSource;
 {
     [downloadTask cancel];
 }
+
+
 
 @end

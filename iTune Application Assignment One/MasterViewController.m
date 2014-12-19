@@ -15,6 +15,7 @@
 #import "ImageDownloader.h"
 #import "DetailViewSwipe.h"
 #import "AppDelegate.h"
+#import "LandscapeDetailviewController.h"
 
 #define queue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
 #define JSONURL [NSURL URLWithString:@"https://itunes.apple.com/us/rss/newfreeapplications/limit=2/json"]
@@ -52,10 +53,10 @@ static NSString *cellIdentifier = @"ApplicationCell";
     // Parse json
     if(appDelegate.hasInternetConnection)
         [self fetchJSONData];
-    if([_applicationRecords count] > 0)
-    {
-        self.filteredApplicationRecords = [NSMutableArray arrayWithCapacity:[_applicationRecords count]];
-    }
+    //    if([_applicationRecords count] > 0)
+    //    {
+    //        self.filteredApplicationRecords = [NSMutableArray arrayWithCapacity:[_applicationRecords count]];
+    //    }
     self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
 }
 
@@ -109,27 +110,55 @@ static NSString *cellIdentifier = @"ApplicationCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    DetailViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"appDetailsViewController"];
-    
-    detailViewController.currentIndexPath = indexPath;
-    
-    ApplicationData *appObject;
-    
-    if([self.filteredApplicationRecords count] && tableView == self.searchDisplayController.searchResultsTableView)
+    if (_isLandscape)
     {
-        detailViewController.applicationRecordsForDetailView = self.filteredApplicationRecords;
-        appObject = self.filteredApplicationRecords[indexPath.row];
-        detailViewController.appRecord = appObject;
-
+        LandscapeDetailviewController *landscapeDetailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"LandscapeDetailviewController"];
+        
+        landscapeDetailViewController.currentIndexPath = indexPath;
+        
+        ApplicationData *appObject;
+        
+        if([self.filteredApplicationRecords count] && tableView == self.searchDisplayController.searchResultsTableView)
+        {
+            landscapeDetailViewController.applicationRecordsForDetailView = self.filteredApplicationRecords;
+            appObject = self.filteredApplicationRecords[indexPath.row];
+            landscapeDetailViewController.appRecord = appObject;
+            
+        }
+        else
+        {
+            landscapeDetailViewController.applicationRecordsForDetailView = self.applicationRecords;
+            appObject = self.applicationRecords[indexPath.row];
+            landscapeDetailViewController.appRecord = appObject;
+        }
+        
+        [self.navigationController pushViewController:landscapeDetailViewController animated:YES];
     }
     else
     {
-        detailViewController.applicationRecordsForDetailView = self.applicationRecords;
-        appObject = self.applicationRecords[indexPath.row];
-        detailViewController.appRecord = appObject;
+        DetailViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"appDetailsViewController"];
+        
+        detailViewController.currentIndexPath = indexPath;
+        
+        ApplicationData *appObject;
+        
+        if([self.filteredApplicationRecords count] && tableView == self.searchDisplayController.searchResultsTableView)
+        {
+            detailViewController.applicationRecordsForDetailView = self.filteredApplicationRecords;
+            appObject = self.filteredApplicationRecords[indexPath.row];
+            detailViewController.appRecord = appObject;
+            
+        }
+        else
+        {
+            detailViewController.applicationRecordsForDetailView = self.applicationRecords;
+            appObject = self.applicationRecords[indexPath.row];
+            detailViewController.appRecord = appObject;
+        }
+        
+        [self.navigationController pushViewController:detailViewController animated:YES];
+        
     }
-    
-    [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 - (void)loadIconForOnScreenRows
@@ -161,7 +190,7 @@ static NSString *cellIdentifier = @"ApplicationCell";
 - (void)filterContentForSearchText:(NSString *)searchText scope:(NSString *)scope
 {
     [self.filteredApplicationRecords removeAllObjects];
-    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF.name BEGINSWITH[c] %@", searchText];
+    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF.name CONTAINS[c] %@", searchText];
     
     self.filteredApplicationRecords = [NSMutableArray arrayWithArray:[self.applicationRecords filteredArrayUsingPredicate:resultPredicate]];
 }
@@ -170,6 +199,23 @@ static NSString *cellIdentifier = @"ApplicationCell";
 {
     [self filterContentForSearchText:searchString scope:[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
     return YES;
+}
+
+- (void)viewDidDisappear:(BOOL)animated;  // Called after the view was dismissed, covered or otherwise hidden. Default does nothing
+{
+    [super viewDidDisappear:nil];
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:nil];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if (self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft || self.interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        _isLandscape = YES;
+    }
+    else{
+        _isLandscape = NO;
+    }
+    
 }
 
 #pragma mark - ParseDelegate
@@ -183,7 +229,6 @@ static NSString *cellIdentifier = @"ApplicationCell";
         });
     });
 }
-
 
 - (void)dealloc
 {
